@@ -1,4 +1,6 @@
 #include <iostream>
+#include <sstream> // string stream
+
 #include <cmath>
 #include "agent.hpp"
 
@@ -26,23 +28,22 @@ void CAgent::maneuver(double time)
 {
     m_position.x += sin(DEG2RAD(m_heading)) * m_speed * time;
     m_position.y += cos(DEG2RAD(m_heading)) * m_speed * time;
-
 }
 
-bool CAgent::detect(CAgent* pTarget)
+bool CAgent::detect(CAgent *pTarget)
 {
     bool detectFlag = false;
     std::cout << "\tAgentID: " << m_agent_id << " Detection Start" << std::endl;
-    if(CALC_DIST(m_position, pTarget->getPosition()) <= m_detect_range)
+    if (CALC_DIST(m_position, pTarget->getPosition()) <= m_detect_range)
     {
-        std::cout << "\t>> Target Detected: " << pTarget->getAgentID() << std::endl; 
+        std::cout << "\t>> Target Detected: " << pTarget->getAgentID() << std::endl;
         detectFlag = true;
     }
     std::cout << "\tAgentID: " << m_agent_id << " Detection Ended" << std::endl;
     return detectFlag;
 }
 
-const Pos& CAgent::getPosition() const
+const Pos &CAgent::getPosition() const
 {
     return m_position;
 }
@@ -67,10 +68,17 @@ double CAgent::getRange() const
     return m_detect_range;
 }
 
-std::ostream& operator<<( std::ostream& os, const CAgent& ag)
+std::string CAgent::to_string() const
 {
-        const Pos pos = ag.getPosition();
-        os << "Agent ID:" << ag.getAgentID() << '(' << (long) pos.x << ", " << (long) pos.y << ")";
-        os << " [S: " << ag.getSpeed() << ", H: " << ag.getHeading() << ", R: " << ag.getRange()<< "]";
-        return os;
-    }
+    std::stringstream os;
+    const Pos pos = getPosition();
+    os << "Agent ID:" << getAgentID() << '(' << (long)pos.x << ", " << (long)pos.y << ")";
+    os << " [S: " << getSpeed() << ", H: " << getHeading() << ", R: " << getRange() << "]";
+    return os.str();
+}
+
+std::ostream &operator<<(std::ostream &os, const CAgent &ag)
+{
+    os << ag.to_string();
+    return os;
+}
